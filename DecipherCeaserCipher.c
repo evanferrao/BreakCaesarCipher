@@ -74,8 +74,8 @@ int findBestShift(const int *letterFrequencies) {
 void shiftText(const char *text, char *shiftedText, int shift) {
     for (int i = 0; text[i] != '\0'; i++) {
         if (my_isalpha(text[i])) {
-            char base = my_isupper(text[i]) ? 'A' : 'a';
-            shiftedText[i] = (char) ((text[i] - base + shift) % ALPHABET_SIZE + base);
+            char base = 'a';
+            shiftedText[i] = (char) ((my_tolower(text[i]) - base + shift) % ALPHABET_SIZE + base);
         } else {
             shiftedText[i] = text[i];
         }
@@ -83,11 +83,26 @@ void shiftText(const char *text, char *shiftedText, int shift) {
     shiftedText[strlen(text)] = '\0';
 }
 
+void restoreCase(const char *originalText, const char *shiftedText, char *finalText) {
+    for (int i = 0; originalText[i] != '\0'; i++) {
+        if (my_isupper(originalText[i])) {
+            finalText[i] = shiftedText[i] - ('a' - 'A');
+        } else {
+            finalText[i] = shiftedText[i];
+        }
+    }
+    finalText[strlen(originalText)] = '\0';
+}
+
 void decipher(const char *encryptedText, char *decryptedText) {
     int letterFrequencies[ALPHABET_SIZE];
     countLetterFrequencies(encryptedText, letterFrequencies);
     int bestShift = findBestShift(letterFrequencies);
-    shiftText(encryptedText, decryptedText, bestShift);
+
+    char shiftedText[1024];
+    shiftText(encryptedText, shiftedText, bestShift);
+
+    restoreCase(encryptedText, shiftedText, decryptedText);
 }
 
 int main() {
