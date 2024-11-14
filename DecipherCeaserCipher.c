@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <math.h>
 
 #define ALPHABET_SIZE 26
@@ -12,13 +11,28 @@ const double ENGLISH_LETTER_FREQUENCIES[ALPHABET_SIZE] = {
     2.758, 0.978, 2.360, 0.150, 1.974, 0.074
 };
 
+char my_tolower(char c) {
+    if (c >= 'A' && c <= 'Z') {
+        return c + ('a' - 'A');
+    }
+    return c;
+}
+
+int my_isalpha(char c) {
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
+int my_isupper(char c) {
+    return (c >= 'A' && c <= 'Z');
+}
+
 void countLetterFrequencies(const char *text, int *frequencies) {
     for (int i = 0; i < ALPHABET_SIZE; i++) {
         frequencies[i] = 0;
     }
     for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha(text[i])) {
-            frequencies[tolower(text[i]) - 'a']++;
+        if (my_isalpha(text[i])) {
+            frequencies[my_tolower(text[i]) - 'a']++;
         }
     }
 }
@@ -59,8 +73,8 @@ int findBestShift(const int *letterFrequencies) {
 
 void shiftText(const char *text, char *shiftedText, int shift) {
     for (int i = 0; text[i] != '\0'; i++) {
-        if (isalpha(text[i])) {
-            char base = isupper(text[i]) ? 'A' : 'a';
+        if (my_isalpha(text[i])) {
+            char base = my_isupper(text[i]) ? 'A' : 'a';
             shiftedText[i] = (char) ((text[i] - base + shift) % ALPHABET_SIZE + base);
         } else {
             shiftedText[i] = text[i];
